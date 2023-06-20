@@ -10,6 +10,8 @@ on:
       - staging
       - "feat/**"
       - "fix/**"
+
+    workflow_dispatch: # Add this event to manually trigger the workflow
 jobs:
   test:
     runs-on: ubuntu-latest
