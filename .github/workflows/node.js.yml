@@ -10,8 +10,10 @@ on:
       - staging
       - "feat/**"
       - "fix/**"
+  repository_dispatch:
+    types:
+      - rebuild # Add this event type to trigger the workflow manually
 
-    workflow_dispatch: # Add this event to manually trigger the workflow
 jobs:
   test:
     runs-on: ubuntu-latest
