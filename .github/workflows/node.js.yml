@@ -2,7 +2,7 @@ name: Build testing
 
 on:
   push:
-    branches: ["main", "staging"]
+    branches: ["main", "staging", "strapi"]
   pull_request:
     # Sequence of patterns matched against refs/heads
     branches:
