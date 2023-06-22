@@ -49,7 +49,7 @@ export default function Home({ data, meta }: StrapiResponseProps) {
 
 export const getStaticProps: GetStaticProps = async () => {
   return axios
-    .get("http://localhost:1337/api/restaurants")
+    .get(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/restaurants}`)
     .then((res) => {
       const response: StrapiResponseProps = {
         data: res.data.data,
