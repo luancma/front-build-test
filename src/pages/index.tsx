@@ -1,10 +1,8 @@
 import { GetStaticProps } from "next";
 import axios from "axios";
 
-export default function Home({
-  dynamicUpdates,
-}: {
-  dynamicUpdates?: {
+type DynamicUpdatesProps = {
+  dynamicUpdates: {
     payload: {
       body: {
         version: number;
@@ -12,33 +10,57 @@ export default function Home({
       };
     };
   };
-}) {
-  console.log(process.env.NEXT_PUBLIC_BACKEND);
+};
+
+type StrapiResponseProps = {
+  data?: {
+    id: number;
+    attributes: {
+      Name: string;
+      Description: string;
+      createdAt: string;
+      updatedAt: string;
+      publishedAt: string;
+    };
+  }[];
+  meta?: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
+};
+
+export default function Home({ data, meta }: StrapiResponseProps) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <h1>Testing Build</h1>
-      <p className="text-2xl">
-        {dynamicUpdates?.payload.body.version || "No version"}
-      </p>
-      <p className="text-2xl">
-        {dynamicUpdates?.payload.body.message || "No message"}
-      </p>
+      {data?.map((restaurant) => (
+        <div key={restaurant.id}>
+          <h2>{restaurant.attributes.Name}</h2>
+          <p>{restaurant.attributes.Description}</p>
+        </div>
+      ))}
     </main>
   );
 }
 
 export const getStaticProps: GetStaticProps = async () => {
   return axios
-    .post(`${process.env.NEXT_PUBLIC_BACKEND}/webhook`)
-    .then((response) => {
-      const data = response.data;
+    .get("http://localhost:1337/api/restaurants")
+    .then((res) => {
+      const response: StrapiResponseProps = {
+        data: res.data.data,
+        meta: res.data.meta,
+      };
+
       return {
-        props: {
-          dynamicUpdates: data,
-        },
+        props: response,
       };
     })
-    .catch((error) => {
+    .catch((err) => {
       return {
         props: {},
       };
