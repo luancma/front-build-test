@@ -2,67 +2,43 @@ import { GetStaticProps } from "next";
 import axios from "axios";
 
 type DynamicUpdatesProps = {
-  dynamicUpdates: {
-    payload: {
-      body: {
-        version: number;
-        message: string;
-      };
-    };
+  content: {
+    version: number;
+    message: string;
   };
 };
 
-type StrapiResponseProps = {
-  data?: {
-    id: number;
-    attributes: {
-      Name: string;
-      Description: string;
-      createdAt: string;
-      updatedAt: string;
-      publishedAt: string;
-    };
-  }[];
-  meta?: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-};
-
-export default function Home({ data, meta }: StrapiResponseProps) {
+export default function Home({ content }: DynamicUpdatesProps) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <h1>Testing Build</h1>
-      {data?.map((restaurant) => (
-        <div key={restaurant.id}>
-          <h2>{restaurant.attributes.Name}</h2>
-          <p>{restaurant.attributes.Description}</p>
-        </div>
-      ))}
+      <h2>{content?.version}</h2>
+      <p>{content?.message}</p>
     </main>
   );
 }
 
 export const getStaticProps: GetStaticProps = async () => {
   return axios
-    .get(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/restaurants`)
+    .get(`http://127.0.0.1:3001/content`)
     .then((res) => {
-      const response: StrapiResponseProps = {
-        data: res.data.data,
-        meta: res.data.meta,
-      };
-
       return {
-        props: response,
+        props: {
+          content: {
+            version: res.data.version,
+            message: res.data.message,
+          },
+        },
       };
     })
     .catch((err) => {
       return {
-        props: {},
+        props: {
+          content: {
+            version: 0,
+            message: "Error",
+          },
+        },
       };
     });
 };

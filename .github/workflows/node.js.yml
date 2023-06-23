@@ -1,16 +1,13 @@
 name: Build testing
-
-on:
+'on':
   push:
-    branches: ["main", "staging", "strapi"]
-  pull_request:
-    # Sequence of patterns matched against refs/heads
     branches:
       - main
-      - strapi
       - staging
-      - "feat/**"
-      - "fix/**"
+  pull_request:
+    branches:
+      - main
+      - staging
   repository_dispatch:
     types:
       - rebuild
@@ -18,17 +15,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Test using Node.js
+    build_and_deploy:
+      - name: Build Process
         uses: actions/setup-node@v2
         with:
           node-version: 16
       - run: yarn install
       - run: yarn build
-
-      - name: Deploy to GH Pages 🚀
+      
+      - name: "Deploy to GH Pages \U0001F680"
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.TOKEN }}
+          github_token: '${{ secrets.TOKEN }}'
           publish_dir: ./out
